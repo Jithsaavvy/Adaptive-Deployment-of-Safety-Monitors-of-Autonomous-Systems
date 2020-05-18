@@ -14,7 +14,7 @@ instance["min_tactile_sensor_count"] = 100
 instance["min_memory_fused"] = 400
 instance["np"] = 4
 instance["platforms"] = set([1,2,3,4])
-# solve to get the genral solution
+# solve to get the general solution
 result_general = instance.solve()
 # solve to find the intermediate solution
 result_intermediate = instance.solve(intermediate_solutions=True)
