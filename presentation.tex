@@ -1,0 +1,61 @@
+\documentclass{beamer}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ragged2e}  % `\justifying` text
+\usepackage{booktabs}  % Tables
+\usepackage{tabularx}
+\usepackage{tikz}      % Diagrams
+\usetikzlibrary{calc, shapes, backgrounds}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{url}       % `\url
+\usepackage{listings}  % Code listings
+\usepackage[T1]{fontenc}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\usepackage{beamerthemehbrs}
+
+
+\begin{document}
+
+%\begin{frame}
+%    \titlepage
+%\end{frame}
+
+\begin{frame}
+        \frametitle{General Code Skeleton}
+            \begin{itemize}
+                \item The code is divided into two classes namely
+                \begin{enumerate}
+                    \item Repository
+                    \item Safety monitors
+                \end{enumerate}
+                \item \textbf{Repository} is the central component in the architecture. It contains knowledge for deployment.
+                \item The safety monitors are detected and transfers information to other components for deployment.
+                \item It also notifies about the changes in repository to all other components in the system.
+                \item \textbf{Safety Monitor} class perform selection of the safety monitor followed by finding the suitable platform and deploying them.
+            \end{itemize}
+    \end{frame}
+    
+\begin{frame}{}
+    \begin{itemize}
+        \item It contains get-acceptable-platform() which returns platform that satisfy the given requirements by means of Constraint Satisfaction Problem (CSP).
+        \item CSP is implemented using MiniZinc(mzn) library - python based. 
+        \item The requirements are formulated into suitable constraints and platforms that satisfy the given constraints will be selected.
+        \item Finally the safety monitor will be deployed in the selected platform using deploy().
+        %\item Code: \url{https://github.com/AshAswin/Adaptive-Deployment-of-Safety-Monitors-of-Autonomous-Systems/blob/Jithsaavvy-code-skeleton/code_skeleton.py}
+        \item \href{https://github.com/AshAswin/Adaptive-Deployment-of-Safety-Monitors-of-Autonomous-Systems/blob/Jithsaavvy-code-skeleton/code_skeleton.py}{\textbf{Code - GitHub}}
+        
+    \end{itemize}
+    
+\end{frame}
+    
+
+\end{document}
