@@ -1,4 +1,3 @@
-% Planning a balanced meal
 %Inbuilt header file
 include "table.mzn";
 
@@ -16,10 +15,10 @@ int: name = 1;
 int: force_sensor = 2;int: tactile_sensor = 3;int: memory_availability = 4; 
 
 %Number of platforms
-int: np; % number of platforms
+int: np;
 set of int:PLATFORMS = 1..np;
 
-%array of platforms and properties
+%Array of platforms and properties
 array[PLATFORMS] of string: n;       
 array[PLATFORMS,FEATURES] of int: dd;
 
@@ -29,13 +28,13 @@ array[FEATURES] of var int: tactile_platform;
 array[FEATURES] of var int: fused_platform;  
 
 
-%constraint of platform names to be in the provided table
+%Constraint of platform names to be in the provided table
 constraint force_platform[name] in platforms;  
 constraint tactile_platform[name] in platforms;
 constraint fused_platform[name] in platforms;  
 
 
-%constraint that the values to be assigned to platform names are available in the table
+%Constraint that the values to be assigned to platform names are available in the table
 constraint table(force_platform, dd);  
 constraint table(tactile_platform, dd);
 constraint table(fused_platform, dd);  
@@ -51,7 +50,6 @@ output["force_platform =",n[fix(force_platform[name])],"\n",
        "tactile_platform =",n[fix(tactile_platform[name])],"\n",
        "fused_platform = ",n[fix(fused_platform[name])],"\n"];
 
-%platform index required
-%dealing with unavailable platforms
-%ranking platforms and get the best platform
-
+output["force_platform_index =",show(force_platform[name]),"\n",
+       "tactile_platform_index =",show(tactile_platform[name]),"\n",
+       "fused_platform_index = ",show(fused_platform[name]),"\n"];
