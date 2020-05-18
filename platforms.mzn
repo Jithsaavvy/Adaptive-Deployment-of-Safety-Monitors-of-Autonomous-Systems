@@ -46,10 +46,12 @@ constraint fused_platform[memory_availability]>=min_memory_fused;
 
 solve satisfy;
 
+%Prints platform names
 output["force_platform =",n[fix(force_platform[name])],"\n",
        "tactile_platform =",n[fix(tactile_platform[name])],"\n",
        "fused_platform = ",n[fix(fused_platform[name])],"\n"];
 
+%Prints platform indices
 output["force_platform_index =",show(force_platform[name]),"\n",
        "tactile_platform_index =",show(tactile_platform[name]),"\n",
        "fused_platform_index = ",show(fused_platform[name]),"\n"];
