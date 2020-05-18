@@ -22,6 +22,15 @@ set of int:PLATFORMS = 1..np;
 array[PLATFORMS] of string: n;       
 array[PLATFORMS,FEATURES] of int: dd;
 
+%Name of the platforms
+n = ["nvidia_force","amd_tactile","intel_fused","nxp_force"];
+
+%Platform properties
+dd =             [| 1,   1,   50, 400,    % PF1
+                  | 2,   0,  100, 100,    % PF2
+                  | 3,   0,   10, 400,    % PF3
+                  | 4,   1,    0,  50|];  % PF4
+
 %Platforms to be assigned for every sensor
 array[FEATURES] of var int: force_platform; 
 array[FEATURES] of var int: tactile_platform;
