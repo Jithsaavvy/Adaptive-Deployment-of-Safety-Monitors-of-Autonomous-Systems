@@ -1,0 +1,51 @@
+\documentclass{beamer}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ragged2e}  % `\justifying` text
+\usepackage{booktabs}  % Tables
+\usepackage{tabularx}
+\usepackage{tikz}      % Diagrams
+\usetikzlibrary{calc, shapes, backgrounds}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{url}       % `\url
+\usepackage{listings}  % Code listings
+\usepackage[T1]{fontenc}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\usepackage{beamerthemehbrs}
+
+
+\begin{document}
+
+%\begin{frame}
+%    \titlepage
+%\end{frame}
+
+\begin{frame}
+        \frametitle{MiniZn integration with python}
+            \begin{itemize}
+                \item Three functions from minizinc is called namely
+                \begin{enumerate}
+                    \item Instance
+                    \item Model
+                    \item Solver
+                \end{enumerate}
+                \item \textbf{Platforms} selection model is loaded into the Model.
+                \item MiniZinc solver configuration for Gecode is loaded.
+                \item Instance of the platforms model for Gecode is created for initiating the instance.
+                \item All the variables value is assigned inside the instance.
+                \item The instance is solved to get the appropriate solution.
+                \item \href{https://github.com/AshAswin/Adaptive-Deployment-of-Safety-Monitors-of-Autonomous-Systems/blob/Manojkl-miniZn-integration-with-python/MiniZn_integration_with_python.py}{\textbf{Code - GitHub}}
+        
+            \end{itemize}
+    \end{frame}
+
+\end{document}
