@@ -1,7 +1,7 @@
 from minizinc import Instance, Model, Solver
 
 # Load platfroms model from file
-platforms = Model("./platforms.mzn")
+platforms = Model("./mini_zn_model/platforms.mzn")
 
 # # Find the MiniZinc solver configuration for Gecode
 gecode = Solver.lookup("gecode")
