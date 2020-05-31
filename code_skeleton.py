@@ -1,27 +1,38 @@
 #General Skeleton for Adaptive Deployment of Safety Monitors 
 
 import copy
-
+from custom_dtypes import *
 #Repository contains knowledge for deployment. It is the central component in the architecture. 
 #It contains the information about the safety monitors and transfers information to other components for deployment 
 class Repository():
-    #Create an entry in the repository about the safety monitor
-    def create_entry(self):
-        slip_detector='Force_slip_detector'
-        if(slip_detector!=""):
-            print("Success. New information is created in the repository")
-            return 1
-        else:
-            print("Failed. None Detected")
-            return 0
-        
-    def pass_entry(self):
-        slip_detector='Force_slip_detector'
-        return slip_detector
-        
-    #Updates and notifies about the changes in repository to all other components in the system.
-    def notify(self):
-        print("Notified to all components in the repository")
+
+    def __init__(self, active_safety_monitor = SafetyMonitor.NO_SELECTION, active_sensor = Sensors.NO_SELECTION,
+                 current_context = [False, False, False],fixed_deployment = True,
+                 safety_monitor_pltfrm = Platforms.NO_SELECTION):
+
+        self.__active_safety_monitor = active_safety_monitor
+        self.__active_sensor = active_sensor
+        self.__safety_monitor_plfrm = safety_monitor_pltfrm
+        self.__current_context = current_context
+        self.__fixed_deployment = fixed_deployment
+
+    def update_context(self,gripper_status:bool,robot_motion:bool,finger_open=bool):
+        self.__current_context = gripper_status,robot_motion,finger_open
+
+    def update_current_safety_monitor(self,current_safety_monitor):
+        self.__active_safety_monitor = current_safety_monitor
+
+    def update_platform_status(self,safety_monitor_platform):
+        self.__safety_monitor_plfrm = safety_monitor_platform
+
+    def get_active_safety_monitor(self):
+        return self.__active_safety_monitor
+
+    def get_current_context(self):
+        return self.__current_context
+
+    def __notify_changes(self):
+        pass
 
 #Contains definition for selecting the safety monitor and finding the suitable platform to deploy.
 class Safety_monitor():
@@ -57,7 +68,7 @@ class Safety_monitor():
 
 
 if __name__ == '__main__':
-    repo_obj=Repository()
+    repo_obj = Repository()
     #Entry is created in the repository and information is displayed 
     repo_obj.create_entry()
     
