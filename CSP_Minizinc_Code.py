@@ -1,4 +1,4 @@
-#General Skeleton for Adaptive Deployment of Safety Monitors 
+#Adaptive Deployment of Safety Monitors 
 
 from abc import ABC,abstractmethod
 from custom_dtypes import SafetyMonitor,Sensors,Platforms
