@@ -6,7 +6,6 @@ class SafetyMonitor(Enum):
     FUSED_SLIP   = 3
     NO_SELECTION = 4
 
-
 class Sensors(Enum):
     FORCE_SENSOR   = 1
     TACTILE_SENSOR = 2
@@ -20,3 +19,5 @@ class Platforms(Enum):
     NXP = 3
     NVIDIA = 4
     NO_SELECTION = 5
+
+

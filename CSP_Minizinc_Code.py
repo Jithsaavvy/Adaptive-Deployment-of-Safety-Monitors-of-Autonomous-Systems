@@ -1,17 +1,17 @@
-#Adaptive Deployment of Safety Monitors 
+#General Skeleton for Adaptive Deployment of Safety Monitors 
 
 from abc import ABC,abstractmethod
-from custom_dtypes import SafetyMonitor,Sensors,Platforms
+from custom_dtypes import *
 from minizinc import Instance, Model, Solver
 
 #Provide the contextual information needed for selection and deployment.
 class Context_Monitor:
     def __init__(self,repo_image):
         #Initially the robot's context monitor is null
-        self.__gripper_status = None
-        self.__robot_in_motion = None
-        self.__finger_open = None
-        self.__time_stamp = None
+        self.__gripper_status = False
+        self.__robot_in_motion = False
+        self.__finger_open = False
+        self.__time_stamp = 0.0
         self.__repo_image=repo_image
 
     def get_robot_status(self):
@@ -75,7 +75,7 @@ class Selector(ABC):
 class Safety_Monitor_Selector(Selector):
     def __init__(self,repo_image):
         #Initially the attributes are set to null and no safety monitor is selected by default.
-        self.__current_context = None
+        self.__current_context = (False,False,False)
         self.__selected_safety_monitor=SafetyMonitor.NO_SELECTION
         self.__repo_image=repo_image
     
@@ -105,26 +105,26 @@ class Platform_Selector(Selector):
         #Initially the attributes are set to null and no safety monitor and platform is selected by default.
         self.__current_safety_monitor = SafetyMonitor.NO_SELECTION
         self.__repo_image = repo_image
-        self.__platform = SafetyMonitor.NO_SELECTION
+        self.__platform = Platforms.NO_SELECTION
 
     def query_repository(self):
         self.__current_safety_monitor = self.__repo_image.get_active_safety_monitor()
 
     def select_deployment_platform(self):
         #Obtains output from minizinc regarding the selected platform 
-        selected_platform = self.platform_selected()
+        __selected_platform = self.__platform_selected()
         if self.__current_safety_monitor == SafetyMonitor.FORCE_SLIP:
-            self.__platform = selected_platform[0][0]
+            self.__platform = __selected_platform[0][0]
         elif self.__current_safety_monitor == SafetyMonitor.TACTILE_SLIP:
-            self.__platform = selected_platform[1][0]
+            self.__platform = __selected_platform[1][0]
         else:
-            self.__platform = selected_platform[2][0]
+            self.__platform = __selected_platform[2][0]
 
     def update_repository(self):
         self.__repo_image.update_platform_status(self.__platform)
         
     #Returns the selected platform from minizinc that solves CSP
-    def platform_selected(self):
+    def __platform_selected(self):
         #Load platfroms model from file
         platforms = Model("./platforms.mzn")
         #Find the MiniZinc solver configuration for Gecode
