@@ -20,4 +20,3 @@ class Platforms(Enum):
     NVIDIA = 4
     NO_SELECTION = 5
 
-

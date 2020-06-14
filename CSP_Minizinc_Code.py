@@ -3,6 +3,7 @@
 from abc import ABC,abstractmethod
 from custom_dtypes import *
 from minizinc import Instance, Model, Solver
+import argparse
 
 #Provide the contextual information needed for selection and deployment.
 class Context_Monitor:
@@ -37,6 +38,12 @@ class Repository():
         self.__safety_monitor_platform = safety_monitor_platform
         self.__current_context = current_context
         self.__fixed_deployment = fixed_deployment
+        self.name = 1
+        self.min_force_sensor_count = 1
+        self.min_tactile_sensor_count = 100
+        self.min_memory_fused = 400
+        self.np = 4
+        self.platforms = set([1,2,3,4])
 
     #Setter methods for updating current context, safety monitor and platform information for deployment from other componenents
     def update_context(self,gripper_status:bool,robot_motion:bool,finger_open=bool):
@@ -110,34 +117,35 @@ class Platform_Selector(Selector):
     def query_repository(self):
         self.__current_safety_monitor = self.__repo_image.get_active_safety_monitor()
 
-    def select_deployment_platform(self):
+    def select_deployment_platform(self,minizinc_model):
         #Obtains output from minizinc regarding the selected platform 
-        __selected_platform = self.__platform_selected()
+        selected_platform = self.__platform_selected(minizinc_model)
         if self.__current_safety_monitor == SafetyMonitor.FORCE_SLIP:
-            self.__platform = __selected_platform[0][0]
+            self.__platform = selected_platform[0][0]
         elif self.__current_safety_monitor == SafetyMonitor.TACTILE_SLIP:
-            self.__platform = __selected_platform[1][0]
+            self.__platform = selected_platform[1][0]
         else:
-            self.__platform = __selected_platform[2][0]
+            self.__platform = selected_platform[2][0]
 
     def update_repository(self):
         self.__repo_image.update_platform_status(self.__platform)
         
     #Returns the selected platform from minizinc that solves CSP
-    def __platform_selected(self):
+    def __platform_selected(self,minizinc_model):
         #Load platfroms model from file
-        platforms = Model("./platforms.mzn")
+        minizinc_file = "./"+str(minizinc_model)
+        platforms = Model(minizinc_file)
         #Find the MiniZinc solver configuration for Gecode
         gecode = Solver.lookup("gecode")
         # # Create an Instance of the platforms model for Gecode
         instance = Instance(gecode, platforms)
         # Assign 4 to n
-        instance["name"] = 1
-        instance["min_force_sensor_count"] = 1
-        instance["min_tactile_sensor_count"] = 100
-        instance["min_memory_fused"] = 400
-        instance["np"] = 4
-        instance["platforms"] = set([1,2,3,4])
+        instance["name"] = self.__repo_image.name
+        instance["min_force_sensor_count"] = self.__repo_image.min_force_sensor_count
+        instance["min_tactile_sensor_count"] = self.__repo_image.min_tactile_sensor_count
+        instance["min_memory_fused"] = self.__repo_image.min_memory_fused
+        instance["np"] = self.__repo_image.np
+        instance["platforms"] = self.__repo_image.platforms
         # solve to get the general solution
         result_general = instance.solve()
         # solve to find the intermediate solution
@@ -152,6 +160,10 @@ class Platform_Selector(Selector):
 
 
 if __name__ == '__main__':
+    
+    args = argparse.ArgumentParser("Desciption: Please include the constraint satisfaction minizn solver file ")
+    args.add_argument("--model",required = True, help = "Provide the name of the Minizn platform model and make sure the file is in main code folder")
+    minizinc_model = vars(args.parse_args())
     
     repo_obj=Repository()
     #The instance of repository id is passed to context monitor, so that the information from context monitor can be updated to the repository
@@ -168,12 +180,6 @@ if __name__ == '__main__':
     #The platform selector receives selected safety monitor info from repository and selects safety suitable platform using minizinc and updates them in the repository.
     platform_selector_obj=Platform_Selector(repo_obj)
     platform_selector_obj.query_repository()
-    platform_selector_obj.select_deployment_platform()
+    platform_selector_obj.select_deployment_platform(minizinc_model["model"])
     platform_selector_obj.update_repository()
-
-
-
-
-
-
 
