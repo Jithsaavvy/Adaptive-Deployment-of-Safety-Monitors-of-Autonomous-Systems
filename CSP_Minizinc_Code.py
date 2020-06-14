@@ -11,7 +11,6 @@ class Context_Monitor:
         #Initially the robot's context monitor is null
         self.__gripper_status = False
         self.__robot_in_motion = False
-        self.__finger_open = False
         self.__time_stamp = 0.0
         self.__repo_image=repo_image
 
@@ -19,18 +18,17 @@ class Context_Monitor:
         #Robot senses the current state of its environment
         #Initially the sensed data is provided explicitly
         self.__gripper_status=True
-        self.__robot_in_motion=False
-        self.__finger_open=True
+        self.__robot_in_motion=True
 
     def update_info_to_repo(self):
         #Updates the current state of the robot to the repository
-        self.__repo_image.update_context(self.__gripper_status,self.__robot_in_motion,self.__finger_open)
+        self.__repo_image.update_context(self.__gripper_status,self.__robot_in_motion)
 
 
 #Repository contains information for deployment. It is the central component in the architecture. Every components updates the information to the repository. 
 class Repository():
     def __init__(self, active_safety_monitor = SafetyMonitor.NO_SELECTION, active_sensor = Sensors.NO_SELECTION,
-                 current_context = [False, False, False],fixed_deployment = True,
+                 current_context = [False, False],fixed_deployment = True,
                  safety_monitor_platform = Platforms.NO_SELECTION):
 
         self.__active_safety_monitor = active_safety_monitor
@@ -38,7 +36,6 @@ class Repository():
         self.__safety_monitor_platform = safety_monitor_platform
         self.__current_context = current_context
         self.__fixed_deployment = fixed_deployment
-        self.name = 1
         self.min_force_sensor_count = 1
         self.min_tactile_sensor_count = 100
         self.min_memory_fused = 400
@@ -46,8 +43,8 @@ class Repository():
         self.platforms = set([1,2,3,4])
 
     #Setter methods for updating current context, safety monitor and platform information for deployment from other componenents
-    def update_context(self,gripper_status:bool,robot_motion:bool,finger_open=bool):
-        self.__current_context = gripper_status,robot_motion,finger_open
+    def update_context(self,gripper_status:bool,robot_motion:bool):
+        self.__current_context = gripper_status,robot_motion
 
     def update_current_safety_monitor(self,current_safety_monitor):
         self.__active_safety_monitor = current_safety_monitor
@@ -82,7 +79,7 @@ class Selector(ABC):
 class Safety_Monitor_Selector(Selector):
     def __init__(self,repo_image):
         #Initially the attributes are set to null and no safety monitor is selected by default.
-        self.__current_context = (False,False,False)
+        self.__current_context = (False,False)
         self.__selected_safety_monitor=SafetyMonitor.NO_SELECTION
         self.__repo_image=repo_image
     
@@ -90,10 +87,10 @@ class Safety_Monitor_Selector(Selector):
         self.__current_context=self.__repo_image.get_current_context()
 
     def select_safety_monitor(self):
-        if(self.__current_context==(True,False,True)):
+        if(self.__current_context==(True,True)):
             self.__selected_safety_monitor=SafetyMonitor.FORCE_SLIP
 
-        elif(self.__current_context==(False,True,False)):
+        elif(self.__current_context==(True,False)):
             self.__selected_safety_monitor=SafetyMonitor.TACTILE_SLIP
 
         else:
@@ -102,45 +99,49 @@ class Safety_Monitor_Selector(Selector):
     def update_repository(self):
         self.__repo_image.update_current_safety_monitor(self.__selected_safety_monitor)
 
+    #Method for returning the selected safety monitor for performing unit test
+    def get_safety_monitor_unittest(self):
+        return self.__selected_safety_monitor
+
 
 #Contains definition for selecting the platform based on the selected safety monitor. The selected platform information is updated in the repository.
 #Checks and returns the platforms that satisfy the given requirements.
 #It is achieved by solving Constraint Satisfaction Problem (CSP). CSP is implemented using MiniZinc(mzn) library.
 #The requirements are formulated into suitable constraints and platforms that satisfy the given constraints will be selected.
 class Platform_Selector(Selector):
-    def __init__(self, repo_image):
+    def __init__(self, repo_image, minizinc_model):
         #Initially the attributes are set to null and no safety monitor and platform is selected by default.
         self.__current_safety_monitor = SafetyMonitor.NO_SELECTION
         self.__repo_image = repo_image
         self.__platform = Platforms.NO_SELECTION
+        self.__minizinc_model = minizinc_model
+        self._selected_platform = None
 
     def query_repository(self):
         self.__current_safety_monitor = self.__repo_image.get_active_safety_monitor()
 
-    def select_deployment_platform(self,minizinc_model):
+    def select_deployment_platform(self):
         #Obtains output from minizinc regarding the selected platform 
-        selected_platform = self.__platform_selected(minizinc_model)
+        self._selected_platform = self.__platform_selected()
         if self.__current_safety_monitor == SafetyMonitor.FORCE_SLIP:
-            self.__platform = selected_platform[0][0]
+            self.__platform = self._selected_platform[0][0]
         elif self.__current_safety_monitor == SafetyMonitor.TACTILE_SLIP:
-            self.__platform = selected_platform[1][0]
+            self.__platform = self._selected_platform[1][0]
         else:
-            self.__platform = selected_platform[2][0]
-
+            self.__platform = self._selected_platform[2][0]
+    
     def update_repository(self):
         self.__repo_image.update_platform_status(self.__platform)
         
     #Returns the selected platform from minizinc that solves CSP
-    def __platform_selected(self,minizinc_model):
+    def __platform_selected(self):
         #Load platfroms model from file
-        minizinc_file = "./"+str(minizinc_model)
+        minizinc_file = "./"+str(self.__minizinc_model)
         platforms = Model(minizinc_file)
         #Find the MiniZinc solver configuration for Gecode
         gecode = Solver.lookup("gecode")
         # # Create an Instance of the platforms model for Gecode
         instance = Instance(gecode, platforms)
-        # Assign 4 to n
-        instance["name"] = self.__repo_image.name
         instance["min_force_sensor_count"] = self.__repo_image.min_force_sensor_count
         instance["min_tactile_sensor_count"] = self.__repo_image.min_tactile_sensor_count
         instance["min_memory_fused"] = self.__repo_image.min_memory_fused
@@ -178,8 +179,8 @@ if __name__ == '__main__':
     safety_monitor_obj.update_repository()
 
     #The platform selector receives selected safety monitor info from repository and selects safety suitable platform using minizinc and updates them in the repository.
-    platform_selector_obj=Platform_Selector(repo_obj)
+    platform_selector_obj=Platform_Selector(repo_obj,minizinc_model["model"])
     platform_selector_obj.query_repository()
-    platform_selector_obj.select_deployment_platform(minizinc_model["model"])
+    platform_selector_obj.select_deployment_platform()
     platform_selector_obj.update_repository()
 
