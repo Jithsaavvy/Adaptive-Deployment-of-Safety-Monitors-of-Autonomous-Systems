@@ -15,8 +15,8 @@ int: name = 1;
 int: force_sensor = 2;int: tactile_sensor = 3;int: memory_availability = 4; 
 int: simple_pressure_sensor = 5; int: capacitive_and_resistive_flexible_force_sensor = 6; int: piezoelectric = 7; int: strain_gauge_based = 8; int:speed = 9; 
 %Number of platforms
-int: np;
-set of int:PLATFORMS = 1..np;
+int: n_platforms;
+set of int:PLATFORMS = 1..n_platforms;
 
 %Array of platforms and properties
 array[PLATFORMS] of string: n;       

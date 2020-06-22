@@ -1,5 +1,5 @@
 %Number of test platforms
-np = 4;                                    
+n_platforms = 4;
 
 %Name of the platforms
 n = ["nvidia_force","amd_tactile","intel_fused","nxp_force","simple_pressure_sensor","capacitive and resistive flexible force sensor","piezoeletric","strain gauge based"];

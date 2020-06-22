@@ -65,7 +65,7 @@ class Repository():
         self.__safety_monitor_platform = safety_monitor_platform
         self.__current_context = current_context
         self.__fixed_deployment = fixed_deployment
-        self.min_force_sensor = 1
+        self.min_force_sensor_count = 1
         self.min_tactile_sensor_count = 100
         self.min_memory_fused = 400
         self.n_platforms = 4
@@ -339,7 +339,7 @@ class Platform_Selector(Selector):
         gecode = Solver.lookup("gecode")
         # Create an Instance of the platforms model for Gecode
         instance = Instance(gecode, platforms)
-        instance["min_force_sensor"] = self.__repo_image.min_force_sensor
+        instance["min_force_sensor_count"] = self.__repo_image.min_force_sensor_count
         instance["min_tactile_sensor_count"] = self.__repo_image.min_tactile_sensor_count
         instance["min_memory_fused"] = self.__repo_image.min_memory_fused
         instance["n_platforms"] = self.__repo_image.n_platforms
