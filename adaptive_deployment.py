@@ -11,9 +11,6 @@ class Context_Monitor:
     Provide the contextual information needed for selection and deployment.
     """
     def __init__(self,repo_image):
-        """
-        Initially the robot's context monitor is null
-        """
         self.__gripper_status = False
         self.__robot_in_motion = False
         self.__time_stamp = 0.0
