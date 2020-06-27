@@ -53,9 +53,9 @@ The constraints are defined in the minizinc (.mzn) files. The .mzn files can be 
 - Make sure that files such as platforms.mzn, platforms.dzn, custom_dtypes.py, input.csv lies in the same directory.
 - Execute adaptive_deployment.py file. Provide the name of the Minizn platform model as a command line argument.
 ```sh
-python adaptive_deployment.py  --model platforms.mzn 
+python adaptive_deployment.py  --model platforms.mzn --input_data input.csv
 ```
 
-# Reference:
+# References:
 [1]. Hochgeschwender, Nico. “Adaptive Deployment of Safety Monitors for Autonomous Systems.” International Conference on Computer Safety, Reliability, and Security, 2019, pp. 346–357. <br>
 [2] https://en.wikipedia.org/wiki/Constraint_satisfaction_problem 
