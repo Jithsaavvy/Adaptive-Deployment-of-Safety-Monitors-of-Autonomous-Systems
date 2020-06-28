@@ -31,7 +31,6 @@ dd =  [| 1,   1,   50, 400, 1, 1, 0, 0, 10,   % PF1
        | 3,   0,   10, 400, 2, 2, 2, 2, 1000,  % PF3
        | 4,   1,    0,  50, 0, 0, 1, 1, 10,|];  % PF4
 
-%Platforms to be assigned for every sensor
 array[FEATURES] of var int: force_platform; 
 array[FEATURES] of var int: tactile_platform;
 array[FEATURES] of var int: fused_platform;  

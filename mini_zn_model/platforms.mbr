@@ -1,0 +1,16 @@
+include "defs.mbr";
+
+PVS: cp1 = new ConstraintPreferences("cp1") {
+
+  soft-constraint min_latency: 'force_platform[latency] = 20';
+  soft-constraint max_latency: 'force_platform[latency] = 100';
+  soft-constraint suitable_force_sensor: 'force_platform[force_sensor_type] = 4';
+
+  crEdges : '[| mbr.min_latency, mbr.suitable_force_sensor | mbr.max_latency, mbr.suitable_force_sensor |]';
+  useSPD: 'false' ;
+};
+
+
+output '["force_platform = \(force_platform)"]' ;
+
+solve cp1;
