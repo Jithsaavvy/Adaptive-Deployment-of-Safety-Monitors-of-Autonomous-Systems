@@ -8,7 +8,7 @@ n_platforms = 5;
 % force_sensor_types = ["simple_pressure_sensor","capacitive_resistive_flexible_force_sensor","piezoelectric","strain_gauge_based","other"];
 
 %Thresholds
-min_force_sensor_count   = 1;
+force_sensor_presence    = true;
 min_tactile_sensor_count = 100;
 min_memory_fused         = 400;
 min_latency              = 5;

@@ -4,12 +4,13 @@ include "alldifferent.mzn";
 
 
 %Thresholds of properties
-int: min_force_sensor_count;  
+bool: force_sensor_presence;  
 int: min_tactile_sensor_count; 
 int: min_memory_fused;               
 int: min_latency;
 int: max_latency;
 int: req_force_plfm_type;
+
 
 set of PLATFORMS: platforms;
 
@@ -39,8 +40,8 @@ n = ["nvidia_force","amd_tactile","intel_fused","nxp_force","exynos_force"];
 dd =  [| 1,   1,   50, 400, 1, 10,   % PF1
        | 2,   0,  100, 100, 0, 100,  % PF2
        | 3,   0,   10, 400, 0, 1000, % PF3
-       | 4,   1,    0,  50, 2, 10,   % PF5
-       | 5,   1,    0,  50, 3, 10,|];% PF4
+       | 4,   1,    0,  50, 2, 10,   % PF4
+       | 5,   1,    0,  50, 3, 10,|];% PF5
 
 %Platforms to be assigned for every sensor
 array[FEATURES] of var int: force_platform; 
@@ -61,13 +62,14 @@ constraint table(fused_platform, dd);
 
 %Technical constraints
 
-constraint force_platform[force_sensor] == min_force_sensor_count;%R1
+constraint force_platform[force_sensor] == force_sensor_presence;       %R1
 constraint tactile_platform[tactile_sensor] >= min_tactile_sensor_count;%R2
-constraint fused_platform[memory_availability]>=min_memory_fused;%R3
-constraint fused_platform[latency] <= max_latency;%R4
-constraint fused_platform[latency] >= min_latency;%R5
-constraint force_platform[force_sensor_type] == req_force_plfm_type; %R6
+constraint fused_platform[memory_availability]>=min_memory_fused;       %R3
+constraint fused_platform[latency] <= max_latency;                      %R4
+constraint fused_platform[latency] >= min_latency;                      %R5
+constraint force_platform[force_sensor_type] == req_force_plfm_type;    %R6
 
+%Platforms assigned to every slip detector need to be unique
 constraint alldifferent([force_platform[name],tactile_platform[name],fused_platform[name]]);
 
 solve satisfy;
