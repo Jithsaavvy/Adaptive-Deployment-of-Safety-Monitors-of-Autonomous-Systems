@@ -18,5 +18,6 @@ class Platforms(Enum):
     AMD = 2
     NXP = 3
     NVIDIA = 4
-    NO_SELECTION = 5
+    EXYNOS = 5
+    NO_SELECTION = 6
 
