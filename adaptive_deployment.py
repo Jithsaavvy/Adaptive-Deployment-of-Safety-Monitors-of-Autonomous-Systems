@@ -6,7 +6,7 @@ from minizinc import Instance, Model, Solver
 import argparse
 import pandas
 import time
-
+from tabulate import tabulate
 
 class Context_Monitor:
     """
@@ -103,6 +103,9 @@ class Repository():
             None
         """
         self.__current_context = gripper_status, robot_motion
+        print("Current_Context")
+        print(tabulate([self.__current_context], headers=["GripperStatus","RobotMotion"],tablefmt="fancy_grid"))
+        time.sleep(2)
 
     def update_current_safety_monitor(self, current_safety_monitor):
         """
@@ -117,8 +120,8 @@ class Repository():
             None
         """
         self.__active_safety_monitor = current_safety_monitor
-        print("Selected Safety Monitor:{}\t".format(self.__active_safety_monitor))
-
+        print("Selected_Safety_Monitor : {}".format(self.__active_safety_monitor))
+        time.sleep(2)
     def update_platform_status(self, safety_monitor_platform):
         """
         Setter methods for updating current platform status and prints the selected safety monitor to deploy. 
@@ -132,7 +135,6 @@ class Repository():
             None
         """
         self.__safety_monitor_platform = safety_monitor_platform
-        print("Selected Platform:{}\n".format(Platforms(self.__safety_monitor_platform)))
 
     def get_active_safety_monitor(self):
         """
@@ -334,14 +336,24 @@ class Platform_Selector(Selector):
         """
         self.__selected_platforms = self.__platform_selected()
         if len(self.__selected_platforms) == 0:
+            print("The available set of platforms do not satisfy requirements!")
             self.__platform = Platforms.NO_SELECTION
         else:
+            print('"Constraints satisfied"')
+            time.sleep(2)
             if self.__current_safety_monitor == SafetyMonitor.FORCE_SLIP:
-                self.__platform = self.__selected_platforms[0][0]
+                self.__platform = Platforms(self.__selected_platforms[0][0])
+                selected_platform_details = self.__selected_platforms[0]
             elif self.__current_safety_monitor == SafetyMonitor.TACTILE_SLIP:
-                self.__platform = self.__selected_platforms[1][0]
+                self.__platform = Platforms(self.__selected_platforms[1][0])
+                selected_platform_details = self.__selected_platforms[1]
             else:
-                self.__platform = self.__selected_platforms[2][0]
+                self.__platform = Platforms(self.__selected_platforms[2][0])
+                selected_platform_details = self.__selected_platforms[2]
+
+            print("Selected Platform = {}\nProperties:".format(Platforms(selected_platform_details[0])))
+            print(tabulate([selected_platform_details], headers=["Platform ID","ForceSensorPresence","TactileSensorCount","MemoryAvailability",
+                                                        "ForceSensorType","Latency"],tablefmt="fancy_grid"))
 
     def update_repository(self):
         """
@@ -415,23 +427,34 @@ if __name__ == '__main__':
 
     repo_obj = Repository()
     """
-    The instance of repository id is passed to context monitor, so that the information from context monitor can be updated to the repository
+    The instance of repository id is passed to context monitor, so that the information from context monitor 
+    can be updated to the repository
     """
     context_monitor_obj = Context_Monitor(repo_obj)
     """
-    The safety monitor selector receives current context info from repository and selects safety monitor ans updates them in the repository.
+    The safety monitor selector receives current context info from repository and selects safety monitor and
+     updates them in the repository.
     """
     safety_monitor_obj = Safety_Monitor_Selector(repo_obj)
     """
-    The platform selector receives selected safety monitor info from repository and selects safety suitable platform using minizinc and updates them in the repository.
+    The platform selector receives selected safety monitor info from repository and selects safety suitable platform
+     using minizinc and updates them in the repository.
     """
     platform_selector_obj = Platform_Selector(repo_obj, input_args["model"])
+
+    time_step = 0
 
     for data in data_frame.index:
         current_context = (data_frame['gripper_status'][data], data_frame['robot_in_motion'][data])
         platforms_memory_availability = [data_frame['pf1'][data],data_frame['pf2'][data],data_frame['pf3'][data],
                                          data_frame['pf4'][data],data_frame['pf5'][data]]
 
+        print("Time_Step: T{}\n".format(time_step))
+        time.sleep(2)
+        print("Current memory availability in platforms")
+        print(tabulate([platforms_memory_availability], headers=["Platform 1","Platform 2","Platform 3","Platform 4",
+                                                                 "Platform 5"],tablefmt="fancy_grid"))
+        time.sleep(2)
         repo_obj.update_platform_memory_availability(platforms_memory_availability)
         context_monitor_obj.set_robot_status(current_context)
         context_monitor_obj.update_info_to_repo()
@@ -443,4 +466,7 @@ if __name__ == '__main__':
         platform_selector_obj.query_repository()
         platform_selector_obj.select_deployment_platform()
         platform_selector_obj.update_repository()
-        time.sleep(2)
+        time_step+=1
+
+        print("\nWaiting for the next input...\n\n")
+        time.sleep(5)
