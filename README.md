@@ -9,7 +9,7 @@ Minizinc is a free and open source constraint modeling language. It can be used 
  - Python (>= 3.6)
  - Minizinc (2.4.3)
  - Pandas (1.0.7)
- - tabulate (0.8.7)
+ - Tabulate (0.8.7)
  
 # Minizinc as an IDE:
 Minizinc comes with a simple Integrated Development Environment (IDE), which makes it easier for developing and executing constraint models. It is user friendly.
@@ -48,8 +48,12 @@ The constraints are defined in the minizinc (.mzn) files. The .mzn files can be 
 
 **Usage** 
 - Clone the repository to the local machine using ```git clone.```
-- Install the requirements.
-- Make sure Python 3 is installed followed by pandas,tabulate and minizinc packages. (Note: This code doesn’t work with Python 2)
+- Make sure Python 3 is installed followed by pandas,tabulate and minizinc packages.Pandas and tabulate can be installed using the following commands:
+```sh
+pip install pandas
+pip install tabulate
+```
+
 - Execute adaptive_deployment.py file. Provide the path of the Minizn platform model as the command line argument.
 ```sh
 python adaptive_deployment.py  --model mini_zn_model/platforms.mzn --input_data input.csv
