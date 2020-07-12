@@ -17,3 +17,4 @@ req_force_plfm_type      = 3;
 
 platforms = {1,2,3,4,5};
 
+curr_memory_availability=[10,40,50,700,100];
