@@ -40,19 +40,18 @@ The constraints are defined in the minizinc (.mzn) files. The .mzn files can be 
 **Files**
 - The safety monitors, sensors and platforms are available as enumerations in **custom_dtypes.py**
 - Constraints are defined in **platforms.mzn**. It consists of the CSP part and outputs the best suitable platform for deployment.
-- The data for platforms.mzn to work is given in **platforms.dzn** which contains platform names and its properties.
+- The data for platforms.mzn to work is given in **platforms.dzn** which contains platform names and its properties. This file is used only used when the MiniZinc model is executed independently without getting called from the system (python code).
 - **input.csv** contains the list of robot’s context at every intervals along with memory available at each platform. 
     - **Example**: The current context is (True, True) => (gripper_status “False = Closed or True-Open”, robot_in_motion “True = Not stationary or False = stationary”)
-- The actual implementation is provided in **adaptive_deployment.py**
+- The system is realized in **adaptive_deployment.py**
 
 **Usage** 
 - Clone the repository to the local machine using ```git clone.```
 - Install the requirements.
 - Make sure Python 3 is installed followed by pandas and minizinc packages. (Note: It doesn’t work with Python 2)
-- Make sure that files such as platforms.mzn, platforms.dzn, custom_dtypes.py, input.csv lies in the same directory.
-- Execute adaptive_deployment.py file. Provide the name of the Minizn platform model as a command line argument.
+- Execute adaptive_deployment.py file. Provide the path of the Minizn platform model as the command line argument.
 ```sh
-python adaptive_deployment.py  --model platforms.mzn --input_data input.csv
+python adaptive_deployment.py  --model mini_zn_model/platforms.mzn --input_data input.csv
 ```
 
 # References:
