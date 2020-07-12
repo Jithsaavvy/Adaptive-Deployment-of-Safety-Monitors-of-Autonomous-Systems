@@ -77,11 +77,14 @@ class Repository():
         self.__safety_monitor_platform = safety_monitor_platform
         self.__current_context = current_context
         self.__fixed_deployment = fixed_deployment
-        self.min_force_sensor_count = 1
+        self.force_sensor_presence = True
         self.min_tactile_sensor_count = 100
         self.min_memory_fused = 400
-        self.n_platforms = 4
-        self.platforms = set([1,2,3,4])
+        self.fused_platform_min_latency = 5
+        self.fused_platform_max_latency = 200
+        self.force_sensor_type = 3
+        self.n_platforms = 5
+        self.platforms = set([1,2,3,4,5])
 
     
     def update_context(self,gripper_status,robot_motion):
@@ -351,11 +354,15 @@ class Platform_Selector(Selector):
         gecode = Solver.lookup("gecode")
         # Create an Instance of the platforms model for Gecode
         instance = Instance(gecode, platforms)
-        instance["min_force_sensor_count"] = self.__repo_image.min_force_sensor_count
+        instance["force_sensor_presence"] = self.__repo_image.force_sensor_presence
         instance["min_tactile_sensor_count"] = self.__repo_image.min_tactile_sensor_count
         instance["min_memory_fused"] = self.__repo_image.min_memory_fused
         instance["n_platforms"] = self.__repo_image.n_platforms
         instance["platforms"] = self.__repo_image.platforms
+        instance["min_latency"] = self.__repo_image.fused_platform_min_latency
+        instance["max_latency"] = self.__repo_image.fused_platform_max_latency
+        instance["req_force_plfm_type"] = self.__repo_image.force_sensor_type
+
         # solve to get the general solution
         result_general = instance.solve()
         # solve to find the intermediate solution
@@ -374,7 +381,7 @@ if __name__ == '__main__':
     minizinc model is loaded from the terminal 
     """
     args = argparse.ArgumentParser("Description: Please include the constraint satisfaction minizn solver file ")
-    args.add_argument("--model",required = True, help = "Provide the name of the Minizn platform model and make sure the file is in main code folder")
+    args.add_argument("--model",required = True, help = "Provide the path of the Minizn platform model")
     args.add_argument("--input_data",required = True, help = "Provide the csv file containing input data ")
 
     input_args = vars(args.parse_args())
