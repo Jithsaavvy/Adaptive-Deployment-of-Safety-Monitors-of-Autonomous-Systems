@@ -117,7 +117,7 @@ class Repository():
             None
         """
         self.__active_safety_monitor = current_safety_monitor
-        print("Selected safety monitor:", self.__active_safety_monitor)
+        print("Selected Safety Monitor:{}\t".format(self.__active_safety_monitor))
 
     def update_platform_status(self, safety_monitor_platform):
         """
@@ -132,8 +132,7 @@ class Repository():
             None
         """
         self.__safety_monitor_platform = safety_monitor_platform
-        print("\nSelected platform to deploy {0}: PF{1} ".format(self.__active_safety_monitor,
-                                                                 self.__safety_monitor_platform))
+        print("Selected Platform:{}\n".format(Platforms(self.__safety_monitor_platform)))
 
     def get_active_safety_monitor(self):
         """
