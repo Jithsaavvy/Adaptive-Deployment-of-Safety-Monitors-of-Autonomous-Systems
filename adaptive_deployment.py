@@ -4,7 +4,8 @@ from abc import ABC,abstractmethod
 from custom_dtypes import *
 from minizinc import Instance, Model, Solver
 import argparse
-
+import pandas
+import time
 
 class Context_Monitor:
     """
@@ -19,9 +20,7 @@ class Context_Monitor:
     def get_robot_status(self):
     
         """
-        Set the parameters of this variables.
-        This method is used to set the status of the gripper and robot motion.
-        Robot senses the current state of its environment. Initially the sensed data is provided explicitly 
+        This method is used to read the current status of the gripper and robot motion.
         Parameters
         ----------
         **params : 
@@ -33,6 +32,22 @@ class Context_Monitor:
 
         self.__gripper_status=True
         self.__robot_in_motion=True
+
+    def set_robot_status(self,current_context=(False, False)):
+
+        """
+        Set the parameters of this variables.
+        This method is used to set the status of the gripper and robot motion.
+        Parameters
+        ----------
+            current_context: (bool, bool)
+        Returns
+        -------
+            None
+        """
+
+        self.__gripper_status = current_context[0]
+        self.__robot_in_motion = current_context[1]
 
     def update_info_to_repo(self):
         """
@@ -360,29 +375,37 @@ if __name__ == '__main__':
     """
     args = argparse.ArgumentParser("Description: Please include the constraint satisfaction minizn solver file ")
     args.add_argument("--model",required = True, help = "Provide the name of the Minizn platform model and make sure the file is in main code folder")
-    minizinc_model = vars(args.parse_args())
-    
+    args.add_argument("--input_data",required = True, help = "Provide the csv file containing input data ")
+
+    input_args = vars(args.parse_args())
+    data_frame = pandas.read_csv(input_args["input_data"])
+
     repo_obj=Repository()
     """
     The instance of repository id is passed to context monitor, so that the information from context monitor can be updated to the repository
     """
     context_monitor_obj=Context_Monitor(repo_obj)
-    context_monitor_obj.get_robot_status()
-    context_monitor_obj.update_info_to_repo()
-
     """
     The safety monitor selector receives current context info from repository and selects safety monitor ans updates them in the repository.
     """
     safety_monitor_obj=Safety_Monitor_Selector(repo_obj)
-    safety_monitor_obj.query_repository()
-    safety_monitor_obj.select_safety_monitor()
-    safety_monitor_obj.update_repository()
-
     """
     The platform selector receives selected safety monitor info from repository and selects safety suitable platform using minizinc and updates them in the repository.
     """
-    platform_selector_obj=Platform_Selector(repo_obj,minizinc_model["model"])
-    platform_selector_obj.query_repository()
-    platform_selector_obj.select_deployment_platform()
-    platform_selector_obj.update_repository()
+    platform_selector_obj=Platform_Selector(repo_obj,input_args["model"])
 
+
+    for data in data_frame.index:
+        current_context = (data_frame['gripper_status'][data],data_frame['robot_in_motion'][data])
+        #context_monitor_obj.get_robot_status()
+        context_monitor_obj.set_robot_status(current_context)
+        context_monitor_obj.update_info_to_repo()
+
+        safety_monitor_obj.query_repository()
+        safety_monitor_obj.select_safety_monitor()
+        safety_monitor_obj.update_repository()
+
+        platform_selector_obj.query_repository()
+        platform_selector_obj.select_deployment_platform()
+        platform_selector_obj.update_repository()
+        time.sleep(2)
