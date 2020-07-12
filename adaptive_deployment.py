@@ -77,6 +77,8 @@ class Repository():
         self.__safety_monitor_platform = safety_monitor_platform
         self.__current_context = current_context
         self.__fixed_deployment = fixed_deployment
+        #This attribute is added only to show that memory availability of every platform changes over time
+        self.platforms_memory_availability = []
         self.force_sensor_presence = True
         self.min_tactile_sensor_count = 100
         self.min_memory_fused = 400
@@ -162,8 +164,26 @@ class Repository():
         return self.__current_context
 
     def __notify_changes(self):
+        """
+        This method is responsible for broadcasting changes in values to all modules in a system. This is not
+        implemented as of now
+        """
         pass
 
+    def update_platform_memory_availability(self,current_memory_availability):
+        """
+        The update_platform_memory_availability method updates the memory availability of every platform
+
+        Parameters
+        ----------
+        current_memory_availability: list of int
+           current_memory_availability is a list containing memory availability value of every platform
+
+        Returns
+        -------
+            None
+        """
+        self.platforms_memory_availability = current_memory_availability
 
 class Selector(ABC):
     @abstractmethod
@@ -370,6 +390,7 @@ class Platform_Selector(Selector):
         instance["min_latency"] = self.__repo_image.fused_platform_min_latency
         instance["max_latency"] = self.__repo_image.fused_platform_max_latency
         instance["req_force_plfm_type"] = self.__repo_image.force_sensor_type
+        instance["curr_memory_availability"]=  [int(x) for x in self.__repo_image.platforms_memory_availability]
 
         result = instance.solve(intermediate_solutions=True)
         platform_solutions = []
@@ -409,7 +430,10 @@ if __name__ == '__main__':
 
     for data in data_frame.index:
         current_context = (data_frame['gripper_status'][data], data_frame['robot_in_motion'][data])
-        # context_monitor_obj.get_robot_status()
+        platforms_memory_availability = [data_frame['pf1'][data],data_frame['pf2'][data],data_frame['pf3'][data],
+                                         data_frame['pf4'][data],data_frame['pf5'][data]]
+
+        repo_obj.update_platform_memory_availability(platforms_memory_availability)
         context_monitor_obj.set_robot_status(current_context)
         context_monitor_obj.update_info_to_repo()
 

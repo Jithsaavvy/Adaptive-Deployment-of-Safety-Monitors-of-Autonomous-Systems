@@ -33,15 +33,21 @@ set of int:PLATFORMS = 1..n_platforms;
 array[PLATFORMS] of string: n;       
 array[PLATFORMS,FEATURES] of int: dd;
 
+%Memory available in a platform is a dynamic property and therefore varies with time
+array[PLATFORMS] of int : curr_memory_availability;
+
+
 %Name of the platforms
 n = ["nvidia_force","amd_tactile","intel_fused","nxp_force","exynos_force"];
 
+
+
 %Platform properties
-dd =  [| 1,   1,   50, 400, 1, 10,   % PF1
-       | 2,   0,  100, 100, 0, 100,  % PF2
-       | 3,   0,   10, 400, 0, 1000, % PF3
-       | 4,   1,    0,  50, 2, 10,   % PF4
-       | 5,   1,    0,  50, 3, 10,|];% PF5
+dd =  [| 1,   1,   50, curr_memory_availability[1], 1, 10,   % PF1
+       | 2,   0,  100, curr_memory_availability[2], 0, 100,  % PF2
+       | 3,   0,   10, curr_memory_availability[3], 0, 1000, % PF3
+       | 4,   1,    0, curr_memory_availability[4], 2, 10,   % PF4
+       | 5,   1,    0, curr_memory_availability[5], 3, 10,|];% PF5
 
 %Platforms to be assigned for every sensor
 array[FEATURES] of var int: force_platform; 
