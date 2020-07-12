@@ -1,19 +1,19 @@
 %Number of test platforms
-np = 4;                                    
+n_platforms = 5;
 
-%Name of the platforms
-n = ["nvidia_force","amd_tactile","intel_fused","nxp_force"];
+%Number of force sensor types
+%n_force_sensor_types = 5;
 
-%Platform properties
-dd =             [| 1,   1,   50, 400,    % PF1
-                  | 2,   0,  100, 100,    % PF2
-                  | 3,   0,   10, 400,    % PF3
-                  | 4,   1,    0,  50|];  % PF4
+%Types of force sensors in platforms
+% force_sensor_types = ["simple_pressure_sensor","capacitive_resistive_flexible_force_sensor","piezoelectric","strain_gauge_based","other"];
 
 %Thresholds
-min_force_sensor_count   = 1;
+force_sensor_presence    = true;
 min_tactile_sensor_count = 100;
 min_memory_fused         = 400;
+min_latency              = 5;
+max_latency              = 200;
+req_force_plfm_type      = 3;
 
-platforms = {1,2,3,4};
+platforms = {1,2,3,4,5};
 
