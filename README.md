@@ -1,5 +1,6 @@
 # Adaptive-Deployment-of-Safety-Monitors-for-Autonomous-Systems
 ![alt text](https://www.materialhandling247.com/images/product/righthand-robotics-rightpick-robot-arm-3.jpg)
+**Figure 1:** Robot arm picking an object [3]
 
 Adaptive deployment of safety monitors for autonomous systems solves the problem of deploying safety critical software for an autonomous system. The software can be re-deployed by the robots autonomously at runtime that accounts for changing requirements urged by their task, platform and environment [1]. The problem is formulated as a Constraint Satisfaction Problem (CSP). Constraint Satisfaction Problems are mathematical questions defined as a set of objects whose state must satisfy a number of constraints or limitations [2]. It is achieved using a library called **[MiniZinc](https://www.minizinc.org/)**.
 
@@ -61,4 +62,5 @@ python adaptive_deployment.py  --model mini_zn_model/platforms.mzn --input_data 
 
 # References:
 [1]. Hochgeschwender, Nico. “Adaptive Deployment of Safety Monitors for Autonomous Systems.” International Conference on Computer Safety, Reliability, and Security, 2019, pp. 346–357. <br>
-[2] https://en.wikipedia.org/wiki/Constraint_satisfaction_problem 
+[2] https://en.wikipedia.org/wiki/Constraint_satisfaction_problem <br>
+[3] https://www.materialhandling247.com/images/product/righthand-robotics-rightpick-robot-arm-3.jpg
