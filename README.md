@@ -59,6 +59,10 @@ pip install tabulate
 ```sh
 python adaptive_deployment.py  --model mini_zn_model/platforms.mzn --input_data input.csv
 ```
+# Contributors:
+* Jithin Sasikumar <br>
+* Aswinkumar Vijayananth <br>
+* Manoj Kolpe Lingappa <br> 
 
 # References:
 [1]. Hochgeschwender, Nico. “Adaptive Deployment of Safety Monitors for Autonomous Systems.” International Conference on Computer Safety, Reliability, and Security, 2019, pp. 346–357. <br>
